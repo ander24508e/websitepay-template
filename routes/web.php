@@ -127,6 +127,10 @@ Route::get('/dashboard', function () {
         return redirect()->route('admin.usuarios.create');
     }
 
+    if (Auth::user()->can('banners.create')) {
+        return redirect()->route('admin.banners.create');
+    }
+
     return redirect()->route('home');
 })->middleware(['auth', 'active'])->name('dashboard');
 
@@ -276,8 +280,13 @@ Route::middleware(['auth', 'active', 'role:admin|gerente|empleado'])
         Route::delete('/empresa/logo', [EmpresaController::class, 'deleteLogo'])->middleware('permission:company.manage')->name('empresa.deleteLogo');
 
         // Landing Banners
-        Route::resource('/banners', BannerController::class)->only(['index', 'show'])->middleware('permission:banners.view');
-        Route::resource('/banners', BannerController::class)->only(['create', 'store', 'edit', 'update', 'destroy'])->middleware('permission:banners.manage');
+        Route::get('/banners', [BannerController::class, 'index'])->middleware('permission:banners.view')->name('banners.index');
+        Route::get('/banners/create', [BannerController::class, 'create'])->middleware('permission:banners.create')->name('banners.create');
+        Route::post('/banners', [BannerController::class, 'store'])->middleware('permission:banners.create')->name('banners.store');
+        Route::get('/banners/{banner}/edit', [BannerController::class, 'edit'])->middleware('permission:banners.update')->whereNumber('banner')->name('banners.edit');
+        Route::match(['put', 'patch'], '/banners/{banner}', [BannerController::class, 'update'])->middleware('permission:banners.update')->whereNumber('banner')->name('banners.update');
+        Route::delete('/banners/{banner}', [BannerController::class, 'destroy'])->middleware('permission:banners.delete')->whereNumber('banner')->name('banners.destroy');
+        Route::get('/banners/{banner}', [BannerController::class, 'show'])->middleware('permission:banners.view')->whereNumber('banner')->name('banners.show');
 
         Route::resource('/orders', OrderController::class)->only(['index', 'show'])->middleware('permission:orders.view');
         Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->middleware('permission:orders.delete')->name('orders.destroy');

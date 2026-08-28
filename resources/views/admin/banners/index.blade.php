@@ -21,10 +21,12 @@
             </div>
         </form>
 
-        <a href="{{ route('admin.banners.create') }}"
-           class="w-full bg-gray-900 text-white px-5 py-2.5 rounded-lg hover:bg-gray-700 transition font-medium text-center sm:w-auto">
-            + Nuevo Banner
-        </a>
+        @can('banners.create')
+            <a href="{{ route('admin.banners.create') }}"
+               class="w-full bg-gray-900 text-white px-5 py-2.5 rounded-lg hover:bg-gray-700 transition font-medium text-center sm:w-auto">
+                + Nuevo Banner
+            </a>
+        @endcan
     </div>
 
     <div class="bg-white rounded-xl shadow-sm overflow-hidden">
@@ -82,18 +84,22 @@
                                        class="text-blue-600 hover:text-blue-800 text-sm font-medium px-2 py-1">
                                         Ver
                                     </a>
-                                    <a href="{{ route('admin.banners.edit', $banner) }}"
-                                       class="text-yellow-600 hover:text-yellow-800 text-sm font-medium px-2 py-1">
-                                        Editar
-                                    </a>
-                                    <form method="POST" action="{{ route('admin.banners.destroy', $banner) }}"
-                                          onsubmit="return confirm('Eliminar este banner?')" class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="text-red-600 hover:text-red-800 text-sm font-medium px-2 py-1">
-                                            Eliminar
-                                        </button>
-                                    </form>
+                                    @can('banners.update')
+                                        <a href="{{ route('admin.banners.edit', $banner) }}"
+                                           class="text-yellow-600 hover:text-yellow-800 text-sm font-medium px-2 py-1">
+                                            Editar
+                                        </a>
+                                    @endcan
+                                    @can('banners.delete')
+                                        <form method="POST" action="{{ route('admin.banners.destroy', $banner) }}"
+                                              onsubmit="return confirm('Eliminar este banner?')" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="text-red-600 hover:text-red-800 text-sm font-medium px-2 py-1">
+                                                Eliminar
+                                            </button>
+                                        </form>
+                                    @endcan
                                 </div>
                             </td>
                         </tr>

@@ -54,23 +54,29 @@
                 </div>
             </div>
 
+            @canany(['banners.update', 'banners.delete'])
             <div class="bg-white rounded-xl shadow-sm p-6">
                 <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-4">Acciones</p>
                 <div class="flex flex-col gap-3">
-                    <a href="{{ route('admin.banners.edit', $banner) }}"
-                       class="w-full bg-gray-900 text-white py-2.5 rounded-lg hover:bg-gray-700 transition font-medium text-sm text-center">
-                        Editar Banner
-                    </a>
-                    <form action="{{ route('admin.banners.destroy', $banner) }}" method="POST"
-                          onsubmit="return confirm('Eliminar este banner definitivamente?')">
-                        @csrf
-                        @method('DELETE')
-                        <button class="w-full bg-red-50 text-red-600 py-2.5 rounded-lg hover:bg-red-100 transition font-medium text-sm border border-red-200">
-                            Eliminar
-                        </button>
-                    </form>
+                    @can('banners.update')
+                        <a href="{{ route('admin.banners.edit', $banner) }}"
+                           class="w-full bg-gray-900 text-white py-2.5 rounded-lg hover:bg-gray-700 transition font-medium text-sm text-center">
+                            Editar Banner
+                        </a>
+                    @endcan
+                    @can('banners.delete')
+                        <form action="{{ route('admin.banners.destroy', $banner) }}" method="POST"
+                              onsubmit="return confirm('Eliminar este banner definitivamente?')">
+                            @csrf
+                            @method('DELETE')
+                            <button class="w-full bg-red-50 text-red-600 py-2.5 rounded-lg hover:bg-red-100 transition font-medium text-sm border border-red-200">
+                                Eliminar
+                            </button>
+                        </form>
+                    @endcan
                 </div>
             </div>
+            @endcanany
         </div>
 
         <div class="lg:col-span-2 flex flex-col gap-6">

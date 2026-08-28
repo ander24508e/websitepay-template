@@ -51,7 +51,9 @@ class RoleSeeder extends Seeder
             'company.view',
             'company.manage',
             'banners.view',
-            'banners.manage',
+            'banners.create',
+            'banners.update',
+            'banners.delete',
         ];
 
         foreach ($permissions as $permission) {

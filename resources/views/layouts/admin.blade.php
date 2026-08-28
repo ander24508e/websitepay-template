@@ -48,13 +48,13 @@
                 </a>
             @endcan
 
-            @can('banners.view')
-                <a href="{{ route('admin.banners.index') }}"
+            @canany(['banners.view', 'banners.create'])
+                <a href="{{ auth()->user()->can('banners.view') ? route('admin.banners.index') : route('admin.banners.create') }}"
                     class="{{ request()->routeIs('admin.banners.*') ? 'active' : '' }}">
                     <span><x-heroicon-o-rectangle-group class="w-5 h-5" /></span>
                     <span>Banners</span>
                 </a>
-            @endcan
+            @endcanany
 
             <p class="px-4 pt-4 pb-2 text-[11px] uppercase tracking-wider text-slate-400/80 font-semibold">Comercial</p>
             @canany(['sales.view', 'sales.create'])
@@ -191,13 +191,13 @@
                 </a>
             @endcan
 
-            @can('banners.view')
-                <a href="{{ route('admin.banners.index') }}"
+            @canany(['banners.view', 'banners.create'])
+                <a href="{{ auth()->user()->can('banners.view') ? route('admin.banners.index') : route('admin.banners.create') }}"
                     class="{{ request()->routeIs('admin.banners.*') ? 'active' : '' }}">
                     <span><x-heroicon-o-rectangle-group class="w-5 h-5" /></span>
                     <span>Banners</span>
                 </a>
-            @endcan
+            @endcanany
 
             <p class="px-3 pt-4 pb-2 text-[11px] uppercase tracking-wider text-slate-400/80 font-semibold">Comercial</p>
             @canany(['sales.view', 'sales.create'])
