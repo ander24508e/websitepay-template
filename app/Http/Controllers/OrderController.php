@@ -143,7 +143,7 @@ class OrderController extends Controller
             'payphone_ref' => $payphoneResponse['paymentId'] ?? null,
             'amount' => $order->total,
             'status' => 'pending',
-            'response_payload' => $payphoneResponse,
+            'response_payload' => array_merge($payphoneResponse, ['source' => 'payphone_button']),
             'client_transaction_id' => $payphoneResponse['clientTransactionId'] ?? null,
         ]);
 
@@ -226,27 +226,18 @@ class OrderController extends Controller
     private function prepararPagoPayphone(Order $order): ?array
     {
         $currency = (string) config('services.payphone.currency', 'USD');
-        $taxPercent = (int) config('services.payphone.tax', 0);
-        $montoEnCentavos = (int) round($order->total * 100);
+        $amounts = $this->buildPayphoneAmounts((int) round($order->total * 100));
         $clientTransactionId = 'order-' . $order->id . '-' . Str::uuid()->toString();
-
-        $amountWithTax = 0;
-        $amountWithoutTax = $montoEnCentavos;
-
-        if ($taxPercent > 0) {
-            $amountWithoutTax = (int) round($montoEnCentavos / (1 + ($taxPercent / 100)));
-            $amountWithTax = max(0, $montoEnCentavos - $amountWithoutTax);
-        }
 
         try {
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . config('services.payphone.token'),
                 'Content-Type' => 'application/json',
             ])->post(config('services.payphone.base_url') . '/api/button/Prepare', [
-                'amount' => $montoEnCentavos,
-                'amountWithTax' => $amountWithTax,
-                'amountWithoutTax' => $amountWithoutTax,
-                'tax' => $taxPercent,
+                'amount' => $amounts['amount'],
+                'amountWithTax' => $amounts['amount_with_tax'],
+                'amountWithoutTax' => $amounts['amount_without_tax'],
+                'tax' => $amounts['tax'],
                 'clientTransactionId' => $clientTransactionId,
                 'storeId' => config('services.payphone.store_id'),
                 'responseUrl' => route('transaccion.exitosa'),
